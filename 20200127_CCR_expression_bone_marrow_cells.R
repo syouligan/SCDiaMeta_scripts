@@ -19,16 +19,12 @@ if(dir.exists("/Users/mac/cloudstor/")) {
 setwd(paste0(location, "projects/SCDiaMeta/project_results/chemokines"))
 
 # Libraries
-library('DropletUtils')
 library('dplyr')
 library('tidyr')
 library('scater')
-library('EnsDb.Hsapiens.v75')
 library('grid')
 library('ggplot2')
-library('ggridges')
 library('viridis')
-library('Matrix')
 library('reshape2')
 
 # Read CSV with Chemokine Ligand-Receptor detail
@@ -50,9 +46,11 @@ if (place == "local") {
 
 # Add cell type IDs to SCE object
 filtered_exp$Ryan_cluster <- as.character(filtered_exp$ident)
+
 cell_type_key <- as.character(cell_types$Cell_type)
 names(cell_type_key) <- as.character(cell_types$Cluster_ID)
 cell_type_vec <- filtered_exp$Ryan_cluster
+
 for(i in as.character(unique(cell_type_vec))){
   cell_type_vec[cell_type_vec == i] <- cell_type_key[[i]]
   } # Makes vector of colors according to tissue
@@ -77,7 +75,12 @@ CCR.percent <- CCR.percent[order(CCR.percent$Gene),]
 # Make dotplot relecting percentage of expressing cells per CCR
 CCR.percent.melt <- melt(CCR.percent)
 colnames(CCR.percent.melt) <- c("Gene", "Cell_type", "Percent")
-CCR.percent.melt$Gene <- factor(CCR.percent.melt$Gene, levels = rev(CCR.percent$Gene))
+idx <- match(CCR.percent.melt$Cell_type, cell_types$Cell_type)
+CCR.percent.melt$Classification <- cell_types$Classification [idx]
+CCR.percent.melt <- CCR.percent.melt[order(as.character(CCR.percent.melt$Classification), as.character(CCR.percent.melt$Cell_type)),]
+CCR.percent.melt$Gene <- factor(CCR.percent.melt$Gene, levels = rev(unique(CCR.percent$Gene)))
+CCR.percent.melt$Cell_type <- factor(CCR.percent.melt$Cell_type, levels = unique(as.character(CCR.percent.melt$Cell_type)))
+CCR.percent.melt$Classification <- factor(CCR.percent.melt$Classification, levels = unique(as.character(CCR.percent.melt$Classification)))
 CCR.percent.melt$Percent[CCR.percent.melt$Percent == 0] <- NA # Removes 0 values from plot if desired
 
 ggplot(CCR.percent.melt, aes(x = Gene, y = Cell_type)) +
