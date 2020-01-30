@@ -9,7 +9,7 @@ resultsPath='/share/ScratchGeneral/scoyou/projects/'
 scriptsPath='/home/scoyou/projects/'
 
 # Make log path
-mkdir -p $resultsPath$projectID'/logs'
+mkdir -p $scriptsPath$projectID'/'$projectID'_scripts/logs'
 
 qsub -P OsteoporosisandTranslationalResearch -N 'SCEbuild_'$projectID -b y -wd $resultsPath$projectID'/logs' -j y -R y -l mem_requested=8G -pe smp 32 -V -m bea -M s.youlten@garvan.org.au R CMD BATCH $scriptsPath$projectID'/'$projectID'_scripts/Make_SCE_object_from_raw_data.R'
 qsub -P OsteoporosisandTranslationalResearch -N 'Prefiltering_'$projectID -b y -hold_jid 'SCEbuild_'$projectID -wd $resultsPath$projectID'/logs' -j y -R y -l mem_requested=8G -pe smp 32 -V -m bea -M s.youlten@garvan.org.au R CMD BATCH $scriptsPath$projectID'/'$projectID'_scripts/Prefiltering_whole_experiment.R'
