@@ -55,28 +55,49 @@ discard_stats <- DataFrame(colSums(as.matrix(discard)))
 colnames(discard_stats) <- "Cell#"
 print(discard_stats)
 
-sum(discard$low_lib_size)
-sum(discard$low_n_features)
-sum(discard$high_subsets_Mito_percent)
+# Removes cells based on hard filters 
+# filtered_exp$discard_Genes <- discard$Genes_detected < 300
+# filtered_exp$discard_Mito <- discard$Mito_percent > 20
+# filtered_exp$discard_Lib <- discard$Lib_size < 1000
+# filtered_exp$discard <- filtered_exp$discard_Genes | filtered_exp$discard_Mito | filtered_exp$discard_Lib
+# 
+# sum(discard$discard_Genes)
+# sum(discard$discard_Mito)
+# sum(discard$discard_Lib)
 
 # Plot QC stats
 ggplot(data.frame(colData(filtered_exp)), aes(x = Lib_size, y = Sample, fill = Tissue)) +
   geom_density_ridges() +
   theme_minimal() +
-  ggsave("Library_size_ridge.pdf", useDingbats = FALSE)
+  ggsave("Library_size_ridge_before.pdf", useDingbats = FALSE)
 
 ggplot(data.frame(colData(filtered_exp)), aes(x = Genes_detected, y = Sample, fill = Tissue)) +
   geom_density_ridges() +
   theme_minimal() +
-  ggsave("Number_of_genes_ridge.pdf", useDingbats = FALSE)
+  ggsave("Number_of_genes_ridge_before.pdf", useDingbats = FALSE)
 
 ggplot(data.frame(colData(filtered_exp)), aes(x = Mito_percent, y = Sample, fill = Tissue)) +
   geom_density_ridges() +
   theme_minimal() +
-  ggsave("Mito_percent_ridge.pdf", useDingbats = FALSE)
+  ggsave("Mito_percent_ridge_before.pdf", useDingbats = FALSE)
 
 # Remove "discard" cells
 filtered_exp <- filtered_exp[ ,which(!filtered_exp$discard)]
+
+ggplot(data.frame(colData(filtered_exp)), aes(x = Lib_size, y = Sample, fill = Tissue)) +
+  geom_density_ridges() +
+  theme_minimal() +
+  ggsave("Library_size_ridge_after.pdf", useDingbats = FALSE)
+
+ggplot(data.frame(colData(filtered_exp)), aes(x = Genes_detected, y = Sample, fill = Tissue)) +
+  geom_density_ridges() +
+  theme_minimal() +
+  ggsave("Number_of_genes_ridge_after.pdf", useDingbats = FALSE)
+
+ggplot(data.frame(colData(filtered_exp)), aes(x = Mito_percent, y = Sample, fill = Tissue)) +
+  geom_density_ridges() +
+  theme_minimal() +
+  ggsave("Mito_percent_ridge_after.pdf", useDingbats = FALSE)
 
 # Remove genes without counts in at least 3 cells in each samples for any tissue
 tmp_structure <- data.frame(unique(colData(filtered_exp)[ ,c("Tissue", "Sample")]))
