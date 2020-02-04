@@ -47,23 +47,23 @@ filtered_exp$Lib_size <- stats$sum
 filtered_exp$Genes_detected <- stats$detected
 filtered_exp$Mito_percent <- stats$subsets_Mito_percent
 
-discard <- quickPerCellQC(stats, percent_subsets=c("subsets_Mito_percent"), batch=filtered_exp$Sample)
-filtered_exp$discard_LibGenes <- discard$low_lib_size | discard$low_n_features
-filtered_exp$discard_Mito <- discard$high_subsets_Mito_percent
-filtered_exp$discard <- discard$discard
-discard_stats <- DataFrame(colSums(as.matrix(discard)))
-colnames(discard_stats) <- "Cell#"
-print(discard_stats)
+# discard <- quickPerCellQC(stats, percent_subsets=c("subsets_Mito_percent"), batch=filtered_exp$Sample)
+# filtered_exp$discard_LibGenes <- discard$low_lib_size | discard$low_n_features
+# filtered_exp$discard_Mito <- discard$high_subsets_Mito_percent
+# filtered_exp$discard <- discard$discard
+# discard_stats <- DataFrame(colSums(as.matrix(discard)))
+# colnames(discard_stats) <- "Cell#"
+# print(discard_stats)
 
 # Removes cells based on hard filters 
-# filtered_exp$discard_Genes <- discard$Genes_detected < 300
-# filtered_exp$discard_Mito <- discard$Mito_percent > 20
-# filtered_exp$discard_Lib <- discard$Lib_size < 1000
-# filtered_exp$discard <- filtered_exp$discard_Genes | filtered_exp$discard_Mito | filtered_exp$discard_Lib
-# 
-# sum(discard$discard_Genes)
-# sum(discard$discard_Mito)
-# sum(discard$discard_Lib)
+filtered_exp$discard_Genes <- discard$Genes_detected < 300
+filtered_exp$discard_Mito <- discard$Mito_percent > 20
+filtered_exp$discard_Lib <- discard$Lib_size < 1000
+filtered_exp$discard <- filtered_exp$discard_Genes | filtered_exp$discard_Mito | filtered_exp$discard_Lib
+
+sum(discard$discard_Genes)
+sum(discard$discard_Mito)
+sum(discard$discard_Lib)
 
 # Plot QC stats
 ggplot(data.frame(colData(filtered_exp)), aes(x = Lib_size, y = Sample, fill = Tissue)) +
