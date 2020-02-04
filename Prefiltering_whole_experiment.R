@@ -56,9 +56,9 @@ filtered_exp$Mito_percent <- stats$subsets_Mito_percent
 # print(discard_stats)
 
 # Removes cells based on hard filters 
-filtered_exp$discard_Genes <- discard$Genes_detected < 300
-filtered_exp$discard_Mito <- discard$Mito_percent > 20
-filtered_exp$discard_Lib <- discard$Lib_size < 1000
+filtered_exp$discard_Genes <- filtered_exp$Genes_detected < 300
+filtered_exp$discard_Mito <- filtered_exp$Mito_percent > 20
+filtered_exp$discard_Lib <- filtered_exp$Lib_size < 1000
 filtered_exp$discard <- filtered_exp$discard_Genes | filtered_exp$discard_Mito | filtered_exp$discard_Lib
 
 sum(discard$discard_Genes)
